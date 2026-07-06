@@ -8,8 +8,25 @@ export default function Footer() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const validateEmail = (emailStr: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailStr);
+  };
+
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    const trimmedEmail = email.trim();
+
+    if (!trimmedEmail) {
+      setError('Email address is required.');
+      return;
+    }
+
+    if (!validateEmail(trimmedEmail)) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
@@ -17,7 +34,7 @@ export default function Footer() {
       if (isSupabaseConfigured()) {
         const { error: dbError } = await supabase
           .from('subscribers')
-          .insert([{ email }]);
+          .insert([{ email: trimmedEmail }]);
 
         if (dbError) {
           if (dbError.code === '23505') {
@@ -28,7 +45,7 @@ export default function Footer() {
       } else {
         // Demo Mode Fallback
         await new Promise((resolve) => setTimeout(resolve, 800));
-        console.log('Demo mode subscriber email:', email);
+        console.log('Demo mode subscriber email:', trimmedEmail);
       }
 
       setSuccess(true);

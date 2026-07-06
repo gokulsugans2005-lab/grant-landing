@@ -18,8 +18,42 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
   const [error, setError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
+  const validateEmail = (emailStr: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailStr);
+  };
+
+  const validatePassword = (pass: string) => {
+    // Requires at least 8 characters and 1 number
+    return pass.length >= 8 && /\d/.test(pass);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    const trimmedEmail = email.trim();
+    const trimmedName = fullName.trim();
+
+    if (!trimmedEmail || !password) {
+      setError('Please fill in all required fields.');
+      return;
+    }
+
+    if (!validateEmail(trimmedEmail)) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+
+    if (isSignUp) {
+      if (!trimmedName) {
+        setError('Please enter your full name.');
+        return;
+      }
+      if (!validatePassword(password)) {
+        setError('Password must be at least 8 characters long and contain at least one number.');
+        return;
+      }
+    }
+
     setLoading(true);
     setError(null);
     setSuccessMsg(null);
@@ -28,11 +62,11 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
       if (isSupabaseConfigured()) {
         if (isSignUp) {
           const { error: signUpError } = await supabase.auth.signUp({
-            email,
+            email: trimmedEmail,
             password,
             options: {
               data: {
-                full_name: fullName,
+                full_name: trimmedName,
               },
             },
           });
@@ -45,7 +79,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
           }, 4000);
         } else {
           const { data, error: signInError } = await supabase.auth.signInWithPassword({
-            email,
+            email: trimmedEmail,
             password,
           });
           if (signInError) throw signInError;

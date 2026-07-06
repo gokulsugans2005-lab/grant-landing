@@ -17,8 +17,28 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const validateEmail = (emailStr: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailStr);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    const trimmedName = name.trim();
+    const trimmedEmail = email.trim();
+    const trimmedOrg = org.trim();
+    const trimmedMessage = message.trim();
+
+    if (!trimmedName || !trimmedOrg) {
+      setError('Please fill in all required fields.');
+      return;
+    }
+
+    if (!validateEmail(trimmedEmail)) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
@@ -26,13 +46,13 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
       if (isSupabaseConfigured()) {
         const { error: dbError } = await supabase
           .from('demo_bookings')
-          .insert([{ name, email, organization: org, message }]);
+          .insert([{ name: trimmedName, email: trimmedEmail, organization: trimmedOrg, message: trimmedMessage }]);
 
         if (dbError) throw dbError;
       } else {
         // Demo mode fallback: simulate network latency
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        console.log('Demo mode booking request:', { name, email, org, message });
+        console.log('Demo mode booking request:', { name: trimmedName, email: trimmedEmail, org: trimmedOrg, message: trimmedMessage });
       }
 
       setSuccess(true);
