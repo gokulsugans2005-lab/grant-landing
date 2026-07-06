@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-slate-950 text-slate-50 font-sans antialiased;
+}
+
+.glass-panel {
+  @apply bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl;
+}
+
+.gradient-text {
+  @apply bg-gradient-to-r from-indigo-400 via-violet-400 to-emerald-400 bg-clip-text text-transparent;
+}
+
+.gradient-accent {
+  @apply bg-gradient-to-r from-indigo-500 to-violet-500;
+}
+
+.btn-primary {
+  @apply px-6 py-3 bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-semibold rounded-lg hover:from-indigo-700 hover:to-violet-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl cursor-pointer;
+}
+
+.btn-secondary {
+  @apply px-6 py-3 bg-white/10 text-white font-semibold rounded-lg border border-white/20 hover:bg-white/20 hover:border-white/30 transition-all duration-300 cursor-pointer;
+}
+
+.btn-outline {
+  @apply px-6 py-3 bg-transparent text-white font-semibold rounded-lg border border-white/30 hover:border-white/50 hover:bg-white/5 transition-all duration-300 cursor-pointer;
+}
+
+.section-container {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24;
+}
+
+.floating-blob {
+  @apply absolute rounded-full blur-3xl pointer-events-none;
+}
+
+.glow-effect {
+  @apply hover:shadow-glow-lg transition-shadow duration-300;
+}
+
+.smooth-scroll {
+  scroll-behavior: smooth;
+}
+
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animated-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 8s ease infinite;
+}
